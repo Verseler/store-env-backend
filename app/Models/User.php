@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Project::class);
     }
+
+    public function envs()
+    {
+        return $this->hasManyThrough(Project::class, Env::class);
+    }
 }
