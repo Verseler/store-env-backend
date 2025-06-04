@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -16,12 +15,20 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+
+            // Allow password to be null for users logging in with Google
             $table->string('password')->nullable();
-            $table->string('google_id');
+
+            // Allow google_id to be null for users using manual login
+            $table->string('google_id')->nullable()->unique();
+
+            // Optional: store avatar from Google or user-uploaded
             $table->string('avatar')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
