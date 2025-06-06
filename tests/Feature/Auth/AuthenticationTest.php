@@ -2,30 +2,28 @@
 
 use App\Models\User;
 
-test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
+beforeEach(function() {
+    $this->user = User::factory()->create();
+});
 
+test('users can authenticate using the login screen', function () {
     $response = $this->post('/api/v1/login', [
-        'email' => $user->email,
+        'email' => $this->user->email,
         'password' => 'password',
     ]);
 
+    $response->assertStatus(200);
     $this->assertAuthenticated();
-
     expect($response->json('token'))
-        ->toBeString()
-        ->toBeGreaterThan(1);
-
+        ->toBeTruthy()
+        ->toBeString();
     expect($response->json('user'))
-        ->not()
-        ->toBeNull();
+        ->toBeTruthy();
 });
 
 test('users can not authenticate with invalid password', function () {
-    $user = User::factory()->create();
-
     $this->post('/api/v1/login', [
-        'email' => $user->email,
+        'email' => $this->user->email,
         'password' => 'wrong-password',
     ]);
 
@@ -33,10 +31,8 @@ test('users can not authenticate with invalid password', function () {
 });
 
 test('users can logout', function () {
-    $user = User::factory()->create();
-
     //use the authenticated user token to logout because the token is required
-    $response = $this->actingAs($user)->post('/api/v1/logout');
+    $response = $this->actingAs($this->user)->post('/api/v1/logout');
 
     $this->assertAuthenticated();
 
