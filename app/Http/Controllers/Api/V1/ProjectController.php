@@ -19,7 +19,6 @@ class ProjectController extends Controller
     public function index(): JsonResponse
     {
         $cachedProjects = Cache::flexible('projects', [9, 10], function () {
-            sleep(4);
             return Project::with('envs')
                 ->where('user_id', Auth::id())
                 ->paginate(10);

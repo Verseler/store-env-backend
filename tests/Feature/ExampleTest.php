@@ -3,5 +3,5 @@
 test('example', function () {
     $response = $this->get('/');
 
-    $response->assertStatus(200);
+    $response->assertStatus(404); //404: because there is not "/" end point
 });
