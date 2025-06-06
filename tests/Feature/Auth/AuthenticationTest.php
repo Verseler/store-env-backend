@@ -2,11 +2,11 @@
 
 use App\Models\User;
 
-beforeEach(function() {
+beforeEach(function () {
     $this->user = User::factory()->create();
 });
 
-test('users can authenticate using the login screen', function () {
+it('can authenticate a user using the login screen', function () {
     $response = $this->post('/api/v1/login', [
         'email' => $this->user->email,
         'password' => 'password',
@@ -21,7 +21,7 @@ test('users can authenticate using the login screen', function () {
         ->toBeTruthy();
 });
 
-test('users can not authenticate with invalid password', function () {
+it('can not authenticate a user with invalid password', function () {
     $this->post('/api/v1/login', [
         'email' => $this->user->email,
         'password' => 'wrong-password',
@@ -30,9 +30,9 @@ test('users can not authenticate with invalid password', function () {
     $this->assertGuest();
 });
 
-test('users can logout', function () {
+it('can logout a user', function () {
     //use the authenticated user token to logout because the token is required
-    $response = $this->actingAs($this->user)->post('/api/v1/logout');
+    $response = login()->post('/api/v1/logout');
 
     $this->assertAuthenticated();
 
