@@ -8,6 +8,7 @@ use App\Http\Requests\V1\StoreProjectRequest;
 use App\Http\Requests\V1\UpdateProjectRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 class ProjectController extends Controller
@@ -17,10 +18,15 @@ class ProjectController extends Controller
      */
     public function index(): JsonResponse
     {
-        return response()->json(
-            Project::with('envs')
+        $cachedProjects = Cache::flexible('projects', [9, 10], function () {
+            sleep(4);
+            return Project::with('envs')
                 ->where('user_id', Auth::id())
-                ->paginate(10)
+                ->paginate(10);
+        });
+
+        return response()->json(
+            $cachedProjects
         );
     }
 
