@@ -31,7 +31,6 @@ class UpdateProjectRequest extends FormRequest
                 return [
                     'title' => ['required', 'string'],
                     'description' => ['nullable', 'string'],
-                    'user_id' => ['required', 'exists:users,id']
                 ];
 
             case 'PATCH':
@@ -39,7 +38,6 @@ class UpdateProjectRequest extends FormRequest
                 return [
                     'title' => ['sometimes', 'required', 'string'],
                     'description' => ['nullable', 'string'],
-                    'user_id' => ['sometimes', 'required', 'exists:users,id']
                 ];
         }
     }

@@ -18,15 +18,13 @@ class ProjectController extends Controller
      */
     public function index(): JsonResponse
     {
-        $cachedProjects = Cache::flexible('projects', [9, 10], function () {
+        $cachedProjects = Cache::flexible('projects', [5, 10], function () {
             return Project::with('envs')
                 ->where('user_id', Auth::id())
                 ->paginate(10);
         });
 
-        return response()->json(
-            $cachedProjects
-        );
+        return response()->json($cachedProjects);
     }
 
     /**
@@ -34,9 +32,12 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request): JsonResponse
     {
+        $validated = $request->validated();
+        $validated['user_id'] = Auth::id();
+
         return response()->json(Project::create(
-            $request->validated()
-        ));
+            $validated
+        ), 201);
     }
 
     /**
@@ -44,7 +45,6 @@ class ProjectController extends Controller
      */
     public function show(Project $project): JsonResponse
     {
-
         Gate::authorize('view', [$project]);
 
         return response()->json($project);
@@ -55,7 +55,10 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project): JsonResponse
     {
-        $project->update($request->validated());
+        $validated = $request->validated();
+        $validated['user_id'] = Auth::id();
+
+        $project->update($validated);
 
         return response()->json($project);
     }
@@ -65,7 +68,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project): JsonResponse
     {
-        Gate::authorize('destroy', [$project]);
+        Gate::authorize('delete', [$project]);
 
         $project->delete();
 
